@@ -10,4 +10,5 @@ public class AirLineReservationApplication {
         SpringApplication.run(AirLineReservationApplication.class, args);
     }
 
+
 }
