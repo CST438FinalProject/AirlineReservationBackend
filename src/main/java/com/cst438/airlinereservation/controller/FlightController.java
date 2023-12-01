@@ -20,11 +20,14 @@ public class FlightController {
     @Autowired
     FlightRepository flightRepository;
 
+    //todo already done
+    //todo Navya Shetty : get all flights from db
     @GetMapping
     public List<Flight> getFlightList() {
         return (List<Flight>) flightRepository.findAll();
     }
 
+    //todo Navya Shetty : isFull denotes if flight is to be show if there are no seats available
     @GetMapping("/routes/{isFull}")
     public List<Flight> getFlightRoutes(
             @RequestParam String src,
@@ -42,13 +45,19 @@ public class FlightController {
         }
     }
 
+//todo Priya Sawant
     @PostMapping
     public Flight addFlight(@RequestBody Flight flightDetails) {
+        //if(flightDetails.getSrc() == null || flightDetails.getDst() == null)
+
+
         return flightRepository.save(flightDetails);
     }
 
+    //todo Priya Sawant
+    //todo create method to user to cancel flight
     @DeleteMapping("{flightId}")
-    public boolean cancelFlight(@PathVariable Long flightId) {
+    public boolean cancelFlight(@PathVariable Long flightId) { //todo change method name to delete flight
         // Implement logic to cancel a flight
         // Return true if the cancellation is successful, false otherwise
 
@@ -60,4 +69,14 @@ public class FlightController {
         }
         return false;
     }
+
+    //todo Aditya Saraf : EXTERNAL API
+
+    /*
+    todo test APIs using postman ~ friday Nov 30
+    todo jUnit testing ~ friday Nov 30
+    todo end to end testing ~ friday Nov 30
+    todo integration testing  ~ saturday Dec 1
+    todo AWS ~ Sunday Dec 2
+     */
 }
