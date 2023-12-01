@@ -17,9 +17,9 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private Boolean isAdimn;
+    private Boolean isAdmin;
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
-    private List<FlightController> bookedFlights;
+    private List<Flight> bookedFlights;
 
     public int getId() {
         return id;
@@ -45,19 +45,19 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getAdimn() {
-        return isAdimn;
+    public Boolean getAdmin() {
+        return isAdmin;
     }
 
-    public void setAdimn(Boolean adimn) {
-        isAdimn = adimn;
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 
-    public List<FlightController> getBookedFlights() {
+    public List<Flight> getBookedFlights() {
         return bookedFlights;
     }
 
-    public void setBookedFlights(List<FlightController> bookedFlights) {
+    public void setBookedFlights(List<Flight> bookedFlights) {
         this.bookedFlights = bookedFlights;
     }
 }
