@@ -9,6 +9,7 @@ import com.cst438.airlinereservation.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,8 @@ import org.springframework.security.core.Authentication;
 public class FlightController {
     @Autowired
     FlightRepository flightRepository;
+    @Autowired
+    UserRepository userRepository;
 
     //todo already done
     //todo Navya Shetty : get all flights from db
@@ -48,7 +51,9 @@ public class FlightController {
 //todo Priya Sawant
     @PostMapping
     public Flight addFlight(@RequestBody Flight flightDetails) {
-        //if(flightDetails.getSrc() == null || flightDetails.getDst() == null)
+        if(flightDetails.getSrc() == null || flightDetails.getDst() == null){
+            throw new IllegalArgumentException("Source and destination are required for adding a flight.");
+        }
 
 
         return flightRepository.save(flightDetails);
@@ -56,8 +61,30 @@ public class FlightController {
 
     //todo Priya Sawant
     //todo create method to user to cancel flight
+    @DeleteMapping("{flightId}/{userId}")
+    public ResponseEntity<String> cancelUserFlight(@PathVariable Long flightId, @PathVariable Long userId) {
+        Optional<Flight> optionalFlight = flightRepository.findById(flightId);
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalFlight.isPresent() && optionalUser.isPresent()) {
+            Flight flight = optionalFlight.get();
+
+            // Check if the user has the authority to cancel this flight (add your authorization logic here)
+            if (userHasAuthorityToCancelFlight(optionalUser.get(), flight)) {
+                flightRepository.delete(flight);
+                return ResponseEntity.ok("Flight with ID " + flightId + " has been successfully canceled by User ID " + userId + ".");
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User ID " + userId + " does not have the authority to cancel this flight.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Flight with ID " + flightId + " or User with ID " + userId + " not found.");
+        }
+    }
+    private boolean userHasAuthorityToCancelFlight(User user, Flight flight) {
+        return user.getAdmin().contains("ROLE_ADMIN");
+    }
     @DeleteMapping("{flightId}")
-    public boolean cancelFlight(@PathVariable Long flightId) { //todo change method name to delete flight
+    public boolean deleteFlight(@PathVariable Long flightId) { //todo change method name to delete flight
         // Implement logic to cancel a flight
         // Return true if the cancellation is successful, false otherwise
 

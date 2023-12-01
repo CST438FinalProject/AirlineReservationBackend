@@ -40,11 +40,13 @@ public class JwtService {
                     .getBody()
                     .getSubject();
 
-            if (user != null)
+
+           if (user != null)
                 return user;
         }
 
         return null;
     }
+
 }
 
