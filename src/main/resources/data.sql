@@ -1,3 +1,4 @@
-insert into usertable
+insert into USERTABLE
 (username, password,isAdmin)
-values ('user@csumb.edu','');
+values ('user@csumb.edu','', 'FALSE');
+

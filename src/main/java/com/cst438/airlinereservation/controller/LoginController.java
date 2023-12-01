@@ -40,6 +40,6 @@ public class LoginController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
-                .body(user.getRole()); // Assuming role is stored in authorities
+                .body(user.getAdmin()); // Assuming role is stored in authorities
     }
 }

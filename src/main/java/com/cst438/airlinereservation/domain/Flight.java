@@ -2,18 +2,16 @@ package com.cst438.airlinereservation.domain;
 import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+
 @Entity
+@Table(name = "FLIGHTTABLE")
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    private String code;
 
     private String src;
     private String dst;
@@ -21,9 +19,21 @@ public class Flight {
     private Date arrivalTime;
     private int capacity;
     private int availableSeats;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public Flight(){
 
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public long getId() {

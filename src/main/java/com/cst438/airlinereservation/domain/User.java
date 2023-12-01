@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.cst438.airlinereservation.controller.FlightController;
 @Entity
-@Table(name= "user table")
+@Table(name= "USERTABLE")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private Boolean isAdmin;
+    private String isAdmin;
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
     private List<Flight> bookedFlights;
 
@@ -45,11 +45,11 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getAdmin() {
+    public String getAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
+    public void setAdmin(String admin) {
         isAdmin = admin;
     }
 
