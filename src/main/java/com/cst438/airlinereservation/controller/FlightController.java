@@ -52,6 +52,7 @@ public class FlightController {
         // Implement logic to cancel a flight
         // Return true if the cancellation is successful, false otherwise
 
+
         Optional<Flight> optionalFlight = flightRepository.findById(flightId);
         if (optionalFlight.isPresent()) {
             flightRepository.delete(optionalFlight.get());
