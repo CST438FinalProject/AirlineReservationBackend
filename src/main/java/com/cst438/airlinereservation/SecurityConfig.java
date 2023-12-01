@@ -1,4 +1,4 @@
-package com.cst438.flightbooking;
+package com.cst438.airlinereservation;
 
 import java.util.Arrays;
 
@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(exceptionHandler).and()
                 .addFilterBefore(authenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                       UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -67,8 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth)
             throws Exception  {
-        //auth.userDetailsService(userDetailsService)
-                //.passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean

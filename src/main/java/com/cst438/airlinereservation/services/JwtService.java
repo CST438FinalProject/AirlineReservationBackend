@@ -1,4 +1,4 @@
-package com.cst438.flightbooking.services;
+package com.cst438.airlinereservation.services;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

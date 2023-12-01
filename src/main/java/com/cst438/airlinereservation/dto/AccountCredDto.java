@@ -1,4 +1,4 @@
-package com.cst438.flightbooking.dto;
+package com.cst438.airlinereservation.dto;
 
 public record AccountCredDto(String username, String password) {
 }

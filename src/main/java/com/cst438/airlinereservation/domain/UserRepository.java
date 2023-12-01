@@ -1,4 +1,10 @@
-package com.cst438.flightbooking.domain;
+package com.cst438.airlinereservation.domain;
 
-public interface UserRepository {
+import org.springframework.data.repository.CrudRepository;
+
+
+public interface UserRepository extends
+        CrudRepository<User, Integer>{
+
+    User findByUsername(String username);
 }
