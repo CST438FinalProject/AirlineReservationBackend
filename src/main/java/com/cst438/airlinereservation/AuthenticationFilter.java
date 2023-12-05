@@ -28,25 +28,33 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+
         // Get token from Authorization header
         String jws = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (jws != null) {
-            // Verify token and get user
-            String user = jwtService.getAuthUser(request);
+            try {
+                // Verify token and get user
+                String user = jwtService.getAuthUser(request);
 
-            // Authenticate
-            Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(user, null, java.util.Collections.emptyList());
+                // Authenticate
+                Authentication authentication =
+                        new UsernamePasswordAuthenticationToken(user, null, java.util.Collections.emptyList());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                // Log the exception
+                logger.error("Exception in AuthenticationFilter", e);
+            }
         }
 
-        // Continue the filter chain
         filterChain.doFilter(request, response);
     }
 
 
 }
-

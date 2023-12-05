@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface FlightRepository extends CrudRepository<Flight , Long> {
 
-    List<Flight> findBySrcAndDstAndAvailableSeatsGreaterThan(String src, String dst, int availableSeats);
 
-    List<Flight> findBySrcAndDst(String src, String dst);
 
 }
