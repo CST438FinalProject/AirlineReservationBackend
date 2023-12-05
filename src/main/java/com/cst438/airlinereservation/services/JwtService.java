@@ -32,21 +32,27 @@ public class JwtService {
     public String getAuthUser(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (token != null) {
-            String user = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token.replace(PREFIX, ""))
-                    .getBody()
-                    .getSubject();
+        if (token != null && token.startsWith(PREFIX)) {
+            try {
+                String user = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(token.replace(PREFIX, ""))
+                        .getBody()
+                        .getSubject();
 
-
-           if (user != null)
-                return user;
+                if (user != null) {
+                    return user;
+                }
+            } catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.ExpiredJwtException | io.jsonwebtoken.UnsupportedJwtException | io.jsonwebtoken.PrematureJwtException | io.jsonwebtoken.SignatureException e) {
+                // Handle exceptions, log, or return null as needed
+                e.printStackTrace(); // Log the exception for debugging
+            }
         }
 
         return null;
     }
+
 
 }
 

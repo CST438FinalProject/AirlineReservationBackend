@@ -10,9 +10,7 @@ public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private String code;
-
     private String src;
     private String dst;
     private Date departureTime;
@@ -23,6 +21,13 @@ public class Flight {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Flight(){
 

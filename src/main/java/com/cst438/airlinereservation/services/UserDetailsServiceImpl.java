@@ -19,15 +19,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         com.cst438.airlinereservation.domain.User user = repository.findByUsername(username);
 
-        User.UserBuilder builder = null;
-        if (user!=null) {
-            builder = org.springframework.security.core.userdetails.User.withUsername(username);
-            builder.password(user.getPassword());
-            //builder.roles(user.getRole());
+        if (user != null) {
+            return User.withUsername(username)
+                    .password(user.getPassword())
+                    .build();
         } else {
             throw new UsernameNotFoundException("User not found.");
         }
-
-        return builder.build();
     }
 }

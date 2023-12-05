@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,19 +42,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        http.csrf().disable()
+                .cors().and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/h2-console/**", "/favicon.ico").permitAll()
-                .antMatchers(HttpMethod.POST, "/h2-console/**").permitAll()
-                .anyRequest().authenticated().and()
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(exceptionHandler).and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers().frameOptions().disable();
-
     }
 
     @Bean
@@ -71,15 +70,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception  {
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
-    public AuthenticationManager getAuthenticationManager() throws
-            Exception {
+    public AuthenticationManager getAuthenticationManager() throws Exception {
         return authenticationManager();
     }
 }
+
+
+
+
+
