@@ -1,16 +1,25 @@
 package com.cst438.airlinereservation.controller;
+
 import java.security.Principal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import com.cst438.airlinereservation.domain.*;
-import com.cst438.airlinereservation.services.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
-import org.springframework.http.ResponseEntity;
+import com.cst438.airlinereservation.services.JwtService;
+import org.apache.catalina.startup.Tomcat;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 
@@ -48,10 +57,10 @@ public class FlightController {
         }
     }
 
-//todo Priya Sawant
+    //todo Priya Sawant
     @PostMapping
     public Flight addFlight(@RequestBody Flight flightDetails) {
-        if(flightDetails.getSrc() == null || flightDetails.getDst() == null){
+        if (flightDetails.getSrc() == null || flightDetails.getDst() == null) {
             throw new IllegalArgumentException("Source and destination are required for adding a flight.");
         }
 
@@ -80,9 +89,11 @@ public class FlightController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Flight with ID " + flightId + " or User with ID " + userId + " not found.");
         }
     }
+
     private boolean userHasAuthorityToCancelFlight(User user, Flight flight) {
         return user.getAdmin().contains("ROLE_ADMIN");
     }
+
     @DeleteMapping("{flightId}")
     public boolean deleteFlight(@PathVariable Long flightId) { //todo change method name to delete flight
         // Implement logic to cancel a flight
@@ -98,6 +109,43 @@ public class FlightController {
     }
 
     //todo Aditya Saraf : EXTERNAL API
+    @GetMapping("/external")
+    public List<Flight> getExternalFlights() {
+
+        // url to retrieve api key
+        final String tokenURI = "https://api.lufthansa.com/v1/oauth/token";
+        RestTemplate token = new RestTemplate();
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // adding parameters to retrieve key
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", "tmmbykwzxu8h37jshe95dhf5p");
+        map.add("client_secret", "gxBYREvVxr");
+        map.add("grant_type", "client_credentials");
+
+        // creating request and requesting a new key
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, header);
+        String apiKeyResponse = token.postForObject(tokenURI, request, String.class);
+        JSONObject json = new JSONObject(apiKeyResponse);
+
+        String apiKey = json.getString("access_token");
+
+        RestTemplate externalApi = new RestTemplate();
+        HttpHeaders head = new HttpHeaders();
+        head.setAccept(List.of(MediaType.APPLICATION_JSON));
+        head.set("Authorization", "Bearer " + apiKey);
+
+        String externalURI = "https://api.lufthansa.com/v1/flight-schedules";
+        HttpEntity<?> externalEntity = new HttpEntity<>(externalApi);
+        ResponseEntity<List<ExtFlight>> responseEntity = externalApi.exchange(
+                externalURI, HttpMethod.GET, externalEntity, new ParameterizedTypeReference<List<ExtFlight>>() {});
+
+
+        List<ExtFlight> flights = responseEntity.getBody();
+
+        return new ArrayList<>();
+    }
 
     /*
     todo test APIs using postman ~ friday Nov 30

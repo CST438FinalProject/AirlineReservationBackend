@@ -1,3 +1,4 @@
+
 package com.cst438.airlinereservation;
 
 import java.util.Arrays;
@@ -41,19 +42,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        http.csrf().disable()
+                .cors().and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/h2-console/**", "/favicon.ico").permitAll()
-                .antMatchers(HttpMethod.POST, "/h2-console/**").permitAll()
-                .anyRequest().authenticated().and()
+                .antMatchers("/**").permitAll()  // Allow all requests without authentication
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(exceptionHandler).and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers().frameOptions().disable();
-
     }
 
     @Bean
@@ -71,15 +69,69 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception  {
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
-    public AuthenticationManager getAuthenticationManager() throws
-            Exception {
+    public AuthenticationManager getAuthenticationManager() throws Exception {
         return authenticationManager();
     }
 }
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig extends WebSecurityConfigurerAdapter {
+//    @Autowired
+//    private UserDetailsServiceImpl userDetailsService;
+//
+//    @Autowired
+//    private AuthenticationFilter authenticationFilter;
+//
+//    @Autowired
+//    private AuthEntryPoint exceptionHandler;
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.csrf().disable().cors().and()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.POST, "/login").permitAll()
+//                .antMatchers(HttpMethod.GET, "/h2-console/**", "/favicon.ico").permitAll()
+//                .antMatchers(HttpMethod.POST, "/h2-console/**").permitAll()
+//                .anyRequest().authenticated().and()
+//                .exceptionHandling()
+//                .authenticationEntryPoint(exceptionHandler).and()
+//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .headers().frameOptions().disable();
+//
+//    }
+//
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowedOrigins(List.of("*"));
+//        config.setAllowedMethods(List.of("*"));
+//        config.setAllowedHeaders(List.of("*"));
+//        config.setAllowCredentials(false);
+//        config.applyPermitDefaultValues();
+//
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
+//
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth)
+//            throws Exception  {
+//        auth.userDetailsService(userDetailsService)
+//                .passwordEncoder(new BCryptPasswordEncoder());
+//    }
+//
+//    @Bean
+//    public AuthenticationManager getAuthenticationManager() throws
+//            Exception {
+//        return authenticationManager();
+//    }
+//}
