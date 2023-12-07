@@ -25,7 +25,7 @@ public class DataLoader {
             flight1.setArrivalTime(Date.valueOf("2023-12-11"));
             flight1.setCapacity(100);
             flight1.setAvailableSeats(100);
-            // Set other properties...
+
 
             Flight flight2 = new Flight();
             flight2.setCode("FL002");
@@ -35,12 +35,21 @@ public class DataLoader {
             flight2.setArrivalTime(Date.valueOf("2023-12-13"));
             flight2.setCapacity(120);
             flight2.setAvailableSeats(120);
-            // Set other properties...
 
-            // Save flights to the database
+            Flight flight3 = new Flight();
+            flight2.setCode("FL002");
+            flight2.setSrc("CityE");
+            flight2.setDst("CityF");
+            flight2.setDepartureTime(Date.valueOf("2023-12-14"));
+            flight2.setArrivalTime(Date.valueOf("2023-12-15"));
+            flight2.setCapacity(120);
+            flight2.setAvailableSeats(120);
+
+
             flightRepository.save(flight1);
             flightRepository.save(flight2);
-            // Save other flights as needed
+            flightRepository.save(flight3);
+
         };
     }
 }

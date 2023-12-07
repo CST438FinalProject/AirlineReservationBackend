@@ -55,16 +55,16 @@ public class FlightController {
             User user = optionalUser.get();
             flight.setUser(user);
 
-            // Check if the user has already booked a flight
+
             if (user.getBookedFlights().isEmpty()) {
-                // Book the flight for the user
+
                 user.getBookedFlights().add(flight);
                 flightRepository.save(flight);
                 userRepository.save(user);
 
                 return ResponseEntity.ok("User ID " + userId + " has successfully booked Flight ID " + flightId + ".");
             } else {
-                // User has already booked a flight
+
                 return ResponseEntity.badRequest().body("User ID " + userId + " has already booked a flight.");
             }
         } else {
