@@ -1,3 +1,4 @@
+
 package com.cst438.airlinereservation;
 
 
@@ -22,6 +23,7 @@ import com.cst438.airlinereservation.services.JwtService;
 public class AuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
