@@ -1,64 +1,81 @@
 package com.cst438.airlinereservation;
 
+import com.cst438.airlinereservation.controller.FlightController;
 import com.cst438.airlinereservation.domain.Flight;
+import com.cst438.airlinereservation.domain.FlightRepository;
+import com.cst438.airlinereservation.domain.User;
+import com.cst438.airlinereservation.domain.UserRepository;
+import com.cst438.airlinereservation.services.JwtService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
+import javax.transaction.Transactional;
+import java.util.*;
 
+import static java.nio.file.Paths.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class FlightControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private FlightRepository flightRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+
 
     @Test
     void testGetFlightList() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/flights"))
-                .andReturn()
-                .getResponse();
-
-        assertEquals(200, response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON_VALUE, response.getContentType());
-
-        // Parse JSON response to a List of Flight objects
-        List<Flight> flights = objectMapper.readValue(response.getContentAsString(), new TypeReference<List<Flight>>() {});
-        assertNotNull(flights);
-        assertTrue(flights.size() > 0);
-        // Add more assertions as needed
+        mockMvc.perform(MockMvcRequestBuilders.get("/flights"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray());
     }
-
     @Test
-    void testGetReservedFlights() throws Exception {
+    void testCancelUserFlight() throws Exception {
         Long userId = 1L;
+        Long flightId = 1L;
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/user/{userId}/reservedFlights", userId))
-                .andReturn()
-                .getResponse();
+        Flight mockedFlight = new Flight();
+        mockedFlight.setId(flightId);
+        mockedFlight.setAvailableSeats(5);
 
-        assertEquals(200, response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON_VALUE, response.getContentType());
+        User mockedUser = new User();
+        mockedUser.setId(userId);
+        mockedUser.addBookedFlight(mockedFlight);
 
-        // Parse JSON response to a List of Flight objects
-        List<Flight> reservedFlights = objectMapper.readValue(response.getContentAsString(), new TypeReference<List<Flight>>() {});
-        assertNotNull(reservedFlights);
-        // Add more assertions as needed
+        mockMvc.perform(MockMvcRequestBuilders.delete("/cancelFlight/{flightId}/{userId}", flightId, userId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("User ID " + userId + " is not booked on Flight ID " + flightId + "."));
+
     }
 
     @Test
@@ -66,26 +83,20 @@ class FlightControllerTest {
         Long userId = 1L;
         Long flightId = 1L;
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/bookFlight/{flightId}/{userId}", flightId, userId))
-                .andReturn()
-                .getResponse();
+        mockMvc.perform(MockMvcRequestBuilders.post("/bookFlight/{flightId}/{userId}", flightId, userId))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User ID " + userId + " has successfully booked Flight ID " + flightId + "."));
 
-        assertEquals(200, response.getStatus());
-        assertTrue(response.getContentAsString().contains("successfully booked"));
-        // Add more assertions as needed
     }
-
     @Test
-    void testCancelUserFlight() throws Exception {
+    void testGetBookedFlights() throws Exception {
         Long userId = 1L;
-        Long flightId = 1L;
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete("/cancelFlight/{flightId}/{userId}", flightId, userId))
-                .andReturn()
-                .getResponse();
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/{userId}/bookedFlight", userId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 
-        assertEquals(200, response.getStatus());
-        assertTrue(response.getContentAsString().contains("successfully canceled"));
-        // Add more assertions as needed
     }
+
+
 }

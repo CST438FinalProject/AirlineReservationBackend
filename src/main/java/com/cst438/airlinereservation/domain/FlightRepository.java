@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface FlightRepository extends CrudRepository<Flight , Long> {
 
-
-
 }
+
+
+
+

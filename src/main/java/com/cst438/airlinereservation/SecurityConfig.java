@@ -1,20 +1,17 @@
 package com.cst438.airlinereservation;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -24,7 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.cst438.airlinereservation.services.UserDetailsServiceImpl;
 
-import javax.servlet.Filter;
 
 
 @SuppressWarnings("deprecation")
@@ -42,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        System.out.println("Before configuring security");
         http.csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -53,6 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(exceptionHandler).and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers().frameOptions().disable();
+        System.out.println("After configuring security");
+
     }
 
     @Bean
@@ -79,6 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager getAuthenticationManager() throws Exception {
         return authenticationManager();
     }
+
+
 }
 
 
