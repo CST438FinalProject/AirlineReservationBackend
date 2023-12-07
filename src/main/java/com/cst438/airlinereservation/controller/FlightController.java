@@ -3,7 +3,6 @@ package com.cst438.airlinereservation.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.security.Principal;
 
 import com.cst438.airlinereservation.domain.*;
 import com.cst438.airlinereservation.services.JwtService;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -143,52 +141,6 @@ public class FlightController {
         }
     }
 
-//    @DeleteMapping("/cancelFlight/{userId}/{flightId}")
-//    public ResponseEntity<String> cancelUserFlight(@PathVariable Long flightId, @PathVariable Long userId) {
-//        Optional<Flight> optionalFlight = flightRepository.findById(flightId);
-//        Optional<User> optionalUser = userRepository.findById(userId);
-//
-//        if (optionalFlight.isPresent() && optionalUser.isPresent()) {
-//            Flight flight = optionalFlight.get();
-//            User user = optionalUser.get();
-//
-//            // Check if the user is an admin and has the authority to cancel any flight
-//            if (isUserAdmin(user)) {
-//                flightRepository.delete(flight);
-//                return ResponseEntity.ok("Flight with ID " + flightId + " has been successfully canceled by User ID " + userId + ".");
-//            } else {
-//                // User is not an admin, they can only cancel their own flights
-//                if (flight.getUser() != null && flight.getUser().getUserid() == user.getUserid()) {
-//                    flightRepository.delete(flight);
-//                    return ResponseEntity.ok("Flight with ID " + flightId + " has been successfully canceled by User ID " + userId + ".");
-//                } else {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User ID " + userId + " does not have the authority to cancel this flight.");
-//                }
-//            }
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Flight with ID " + flightId + " or User with ID " + userId + " not found.");
-//        }
-//    }
-
-
-
-
-
-
-    // todo Priya Sawant : user can cancel own booked flights, this method should be called isUserAdmin
-
-// todo Priya Sawant : method should check if user is admin
-//    @DeleteMapping("/{flightId}")
-//    public boolean deleteFlight(@PathVariable Long flightId) { //todo change method name to delete flight
-//        // Implement logic to cancel a flight
-//        // Return true if the cancellation is successful, false otherwise
-//        Optional<Flight> optionalFlight = flightRepository.findById(flightId);
-//        if (optionalFlight.isPresent()) {
-//            flightRepository.delete(optionalFlight.get());
-//            return true;
-//        }
-//        return false;
-//    }
 
     //todo Aditya Saraf : EXTERNAL API
 
@@ -256,12 +208,4 @@ public class FlightController {
         return response;
     }
 
-
-    /*
-    todo test APIs using postman ~ friday Nov 30
-    todo jUnit testing ~ friday Nov 30
-    todo end to end testing ~ friday Nov 30
-    todo integration testing  ~ saturday Dec 1
-    todo AWS ~ Sunday Dec 2
-     */
 }
