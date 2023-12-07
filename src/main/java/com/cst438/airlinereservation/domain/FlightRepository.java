@@ -1,16 +1,15 @@
 package com.cst438.airlinereservation.domain;
 
 
-
+import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+public interface FlightRepository extends CrudRepository<Flight , Long> {
 
-public interface UserRepository extends CrudRepository<User, Long> {
-
-    Optional<User> findById(Long userId);
-
-    User findByUsername(String username);
 }
+
+
+
+

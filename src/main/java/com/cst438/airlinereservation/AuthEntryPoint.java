@@ -1,4 +1,5 @@
-package com.cst438.flightbooking;
+
+package com.cst438.airlinereservation;
 
 import java.io.IOException;
 import java.io.PrintWriter;

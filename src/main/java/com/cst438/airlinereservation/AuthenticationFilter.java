@@ -1,5 +1,5 @@
-package com.cst438.flightbooking;
 
+package com.cst438.airlinereservation;
 
 
 import java.io.IOException;
@@ -16,12 +16,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.cst438.flightbooking.services.JwtService;
+
+import com.cst438.airlinereservation.services.JwtService;
 
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -30,20 +32,22 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // Get token from Authorization header
-        String jws = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (jws != null) {
+        if (token != null && token.startsWith("Bearer ")) {
             // Verify token and get user
             String user = jwtService.getAuthUser(request);
 
-            // Authenticate
-            Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(user, null, java.util.Collections.emptyList());
+            if (user != null) {
+                // Authenticate
+                Authentication authentication =
+                        new UsernamePasswordAuthenticationToken(user, null, java.util.Collections.emptyList());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         filterChain.doFilter(request, response);
     }
 }
+
