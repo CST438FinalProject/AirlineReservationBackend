@@ -2,6 +2,8 @@ package com.cst438.airlinereservation.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
@@ -20,10 +22,13 @@ public class ExtFlight {
     private List<DataElement> dataElements;
 
 
-    class PeriodOfOperation{
+    static class PeriodOfOperation{
         private  String startDate;
         private String endDate;
         private String daysOfOperation;
+
+        public PeriodOfOperation() {
+        }
 
         public String getStartDate() {
             return startDate;
@@ -51,7 +56,7 @@ public class ExtFlight {
     }
 
 
-    class Leg{
+    static class Leg{
         private int sequenceNumber;
         private String origin;
         private String destination;
@@ -71,6 +76,9 @@ public class ExtFlight {
         private int aircraftArrivalTimeLT;
         private int aircraftArrivalTimeDateDiffLT;
         private int aircraftArrivalTimeVariation;
+
+        public Leg() {
+        }
 
         public int getSequenceNumber() {
             return sequenceNumber;
@@ -225,11 +233,46 @@ public class ExtFlight {
         }
     }
 
-    class DataElement{
+    static class DataElement{
         private int startLegSequenceNumber;
         private int endLegSequenceNumber;
         private int id;
         private String value;
+
+        public DataElement() {
+        }
+
+        public int getStartLegSequenceNumber() {
+            return startLegSequenceNumber;
+        }
+
+        public void setStartLegSequenceNumber(int startLegSequenceNumber) {
+            this.startLegSequenceNumber = startLegSequenceNumber;
+        }
+
+        public int getEndLegSequenceNumber() {
+            return endLegSequenceNumber;
+        }
+
+        public void setEndLegSequenceNumber(int endLegSequenceNumber) {
+            this.endLegSequenceNumber = endLegSequenceNumber;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 
 
@@ -287,6 +330,21 @@ public class ExtFlight {
 
     public void setDataElements(List<DataElement> dataElements) {
         this.dataElements = dataElements;
+    }
+
+    public Flight externalToFlight(){
+        Flight f = new Flight();
+        LocalDate ld = LocalDate.now();
+        f.setCapacity(1);
+        f.setCode(this.getAirline() + this.getFlightNumber());
+        f.setDst(this.getLegs().get(this.getLegs().size()-1).destination);
+        f.setSrc(this.getLegs().get(0).origin);
+        f.setDepartureTime(Date.valueOf(ld));
+        f.setArrivalTime(Date.valueOf(ld));
+//        f.setArrivalTime(Date.valueOf(this.periodOfOperationUTC.getStartDate()));
+//        f.setDepartureTime(Date.valueOf(this.periodOfOperationUTC.getEndDate()));
+        f.setAvailableSeats(1);
+        return f;
     }
 }
 
