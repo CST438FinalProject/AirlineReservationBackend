@@ -19,14 +19,12 @@ import com.cst438.airlinereservation.dto.AccountCredDto;
 import com.cst438.airlinereservation.services.JwtService;
 @RestController
 public class LoginController {
+
     @Autowired
     private JwtService jwtService;
 
     @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<String> getToken(@RequestBody AccountCredDto credentials) {
@@ -37,21 +35,21 @@ public class LoginController {
 
         Authentication auth;
 
-        try{
+        try {
             auth = authenticationManager.authenticate(creds);
-        }catch(AuthenticationException ae){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access Denied");
+        } catch (AuthenticationException ae) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication Failed: " + ae.getMessage());
         }
 
         // Generate token
         String jwts = jwtService.getToken(auth.getName());
-        User user = userRepository.findByUsername(credentials.username());
 
-        // Build response with the generated token and user role in the body
+        // Build response with the generated token
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
-                .body("Access Granted"); // Assuming role is stored in authorities
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION)
+                .body("Access Granted");
     }
+
 }
 
